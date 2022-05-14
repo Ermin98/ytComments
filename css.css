@@ -1,0 +1,31 @@
+img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  vertical-align: middle;
+}
+
+.comment-content,
+.reply-content {
+  /* border: 3px red solid; */
+  display: inline-block;
+  vertical-align: top;
+}
+
+h1 {
+  margin: 0px;
+}
+
+.collapse {
+  display: none;
+}
+
+.reply-div {
+  /* border: 3px red solid; */
+  /* width: 700px; */
+}
+
+.comment-div {
+  padding-bottom: 30px;
+  /* border: 3px red solid; */
+}
