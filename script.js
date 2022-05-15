@@ -2,9 +2,17 @@
 
 const account1 = {
   image: "https://picsum.photos/30",
-  user: "Ivan Zorzok",
-  pin: "1111",
+  user: "Marko Zorzok",
+  pin: 1111,
 };
+
+const account2 = {
+  image: "https://picsum.photos/30",
+  user: "Paul Berger",
+  pin: 2222,
+};
+
+const accounts = [account1, account2];
 
 const comments = {
   images: [
@@ -98,6 +106,7 @@ const displayComments = function (comms) {
   const replies = document.querySelectorAll(".replies");
   const addReplyDiv = document.querySelectorAll(".add-reply-div ");
   const cancelReplyBtn = document.querySelectorAll(".cancel-reply-btn");
+  const cancelCommentBtn = document.querySelector(".cancel-comment-btn");
 
   let spread = false;
   replyBtn.forEach((btn, i) => {
@@ -111,21 +120,37 @@ const displayComments = function (comms) {
   cancelReplyBtn.forEach((btn, i) => {
     btn.addEventListener("click", function (e) {
       e.preventDefault();
-      console.log(cancelReplyBtn[i]);
       addReplyDiv[i].classList.add("collapse");
       inputReply[i].value = "";
     });
   });
 
+  cancelCommentBtn.addEventListener("click", function (e) {
+    e.preventDefault();
+    console.log(cancelCommentBtn);
+    cancelCommentBtn.classList.add("collapse");
+    commentBtn.classList.add("collapse");
+  });
+
+  commentInput.addEventListener("click", function (e) {
+    e.preventDefault();
+    cancelCommentBtn.classList.remove("collapse");
+    commentBtn.classList.remove("collapse");
+  });
+
   for (let i = sendReplyBtn.length - 1; i >= 0; i--)
     sendReplyBtn[i].addEventListener("click", function (e) {
       e.preventDefault();
-      comments.replies[i].users.push(account1.user);
-      comments.replies[i].texts.push(inputReply[i].value);
-      comments.replies[i].images.push(account1.image);
-      comments.replies[i].opened = true;
 
-      updateUI();
+      if (currentAccount === undefined) {
+        alert("You are not logged in!");
+      } else if (inputReply.value.trim().length !== 0) {
+        comments.replies[i].users.push(currentAccount.user);
+        comments.replies[i].texts.push(inputReply[i].value);
+        comments.replies[i].images.push(currentAccount.image);
+        comments.replies[i].opened = true;
+        updateUI();
+      }
     });
 
   showRepliesBtn.forEach((btn, i) => {
@@ -141,12 +166,17 @@ const displayComments = function (comms) {
 
 commentBtn.addEventListener("click", function (e) {
   e.preventDefault();
-  comments.users.unshift(account1.user);
-  comments.texts.unshift(commentInput.value);
-  comments.images.unshift(account1.image);
-  commentInput.value = "";
-  comments.replies.unshift({ images: [], users: [], texts: [] });
-  updateUI();
+
+  if (currentAccount === undefined) {
+    alert("You are not logged in!");
+  } else if (commentInput.value.trim().length !== 0) {
+    comments.users.unshift(currentAccount.user);
+    comments.texts.unshift(commentInput.value);
+    comments.images.unshift(currentAccount.image);
+    commentInput.value = "";
+    comments.replies.unshift({ images: [], users: [], texts: [] });
+    updateUI();
+  }
 });
 
 const updateUI = function () {
@@ -154,3 +184,54 @@ const updateUI = function () {
   // displayReplies();
 };
 updateUI();
+
+//LOGIN
+
+const loginBtn = document.querySelector(".login__btn");
+const inputLoginUsername = document.querySelector(".login__input--user");
+const inputLoginPin = document.querySelector(".login__input--pin");
+const labelWelcome = document.querySelector(".welcome");
+
+const createUsername = function (accs) {
+  console.log(accs);
+  accs.forEach((acc) => {
+    acc.username = acc.user
+      .split(" ")
+      .map((name) => name[0].toLowerCase())
+      .join("");
+  });
+};
+createUsername(accounts);
+
+let currentAccount;
+currentAccount = account1; //to be removed, fake login
+
+loginBtn.addEventListener("click", function (e) {
+  e.preventDefault();
+
+  currentAccount = accounts.find(
+    (acc) =>
+      acc.username === inputLoginUsername.value &&
+      +inputLoginPin.value === acc.pin
+  );
+
+  console.log(currentAccount);
+
+  if (currentAccount !== undefined) {
+    labelWelcome.textContent = `Welcome back, ${
+      currentAccount.user.split(" ")[0]
+    }!`;
+    inputLoginUsername.value = inputLoginPin.value = "";
+    inputLoginPin.blur();
+  } else if (
+    inputLoginUsername.value !== "" &&
+    inputLoginPin.value !== "" &&
+    currentAccount === undefined
+  ) {
+    labelWelcome.textContent = `Username or password incorrect!`;
+  } else {
+    labelWelcome.textContent = `Username or password field empty!`;
+  }
+});
+
+/////
