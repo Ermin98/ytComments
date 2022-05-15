@@ -8,18 +8,22 @@
     <title>Document</title>
   </head>
   <body>
-    <div class="add-comment">
-      <img src="https://picsum.photos/30" alt="" />
-      <input
-        class="comment-input"
-        type="text"
-        placeholder="Write a comment..."
-      />
-      <button class="comment-btn">Comment</button>
-      <hr />
+    <div class="comment-app">
+      <div class="add-comment">
+        <img class="main-img" src="https://picsum.photos/30" alt="" />
+        <input
+          class="comment-input"
+          type="text"
+          placeholder="Write a comment..."
+        />
+        <br />
+        <button class="cancel-comment-btn">Cancel</button>
+        <button class="comment-btn">Comment</button>
+      </div>
       <br />
+      <br />
+      <div class="comments"></div>
     </div>
-    <div class="comments"></div>
     <script src="script.js"></script>
   </body>
 </html>

@@ -51,9 +51,13 @@ const displayComments = function (comms) {
           <h1>${comms.users[i]}</h1>
           <p>${comms.texts[i]}</p>
           <button class="reply-btn">Reply</button>
-          </br>
-          <input class="input-reply collapse" type="text"> 
-          <button class="send-reply-btn collapse">Reply</button>
+          <div class="add-reply-div collapse">
+            <input class="input-reply" placeholder="Write a reply..." type="text"> 
+            <br/>
+            <button class="cancel-reply-btn">Cancel</button>
+            <button class="send-reply-btn">Reply</button>
+
+          </div>
           </br>
         
         
@@ -92,12 +96,24 @@ const displayComments = function (comms) {
   const commentDiv = document.querySelectorAll(".comment-div");
   const replyDiv = document.querySelectorAll(".reply-div");
   const replies = document.querySelectorAll(".replies");
+  const addReplyDiv = document.querySelectorAll(".add-reply-div ");
+  const cancelReplyBtn = document.querySelectorAll(".cancel-reply-btn");
 
+  let spread = false;
   replyBtn.forEach((btn, i) => {
     btn.addEventListener("click", function (e) {
       e.preventDefault();
-      inputReply[i].classList.toggle("collapse");
-      sendReplyBtn[i].classList.toggle("collapse");
+      addReplyDiv[i].classList.remove("collapse");
+      inputReply[i].focus();
+    });
+  });
+
+  cancelReplyBtn.forEach((btn, i) => {
+    btn.addEventListener("click", function (e) {
+      e.preventDefault();
+      console.log(cancelReplyBtn[i]);
+      addReplyDiv[i].classList.add("collapse");
+      inputReply[i].value = "";
     });
   });
 
@@ -138,29 +154,3 @@ const updateUI = function () {
   // displayReplies();
 };
 updateUI();
-
-// const displayReplies = function () {
-//   const showRepliesBtn = document.querySelectorAll(".show-replies-btn");
-//   const commentDiv = document.querySelectorAll(".comment-div");
-
-//   showRepliesBtn.forEach((btn, i) => {
-//     comments.replies[i].texts.forEach((reply, j) => {
-//       const html = `<div class="reply-div collapse">
-//                                   <img src=${comments.replies[i].images[j]} alt="" />
-//                                   <h1>${comments.replies[i].users[j]}</h1>
-//                                   <p>${comments.replies[i].texts[j]}</p>
-//                                   </div>
-//                                   `;
-//       commentDiv[i].insertAdjacentHTML("beforeend", html);
-//       const replyDiv = document.querySelectorAll(".reply-div");
-//       showRepliesBtn.forEach((btn, i) => {
-//         replyDiv.forEach((reply) => {
-//           btn.addEventListener("click", function (e) {
-//             e.preventDefault();
-//             reply.classList.toggle("collapse");
-//           });
-//         });
-//       });
-//     });
-//   });
-// };
