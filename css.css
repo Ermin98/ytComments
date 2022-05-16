@@ -27,6 +27,7 @@ h1 {
 .reply-div {
   /* border: 3px red solid; */
   /* width: 700px; */
+  padding-top: 10px;
 }
 
 .comment-div {
@@ -37,7 +38,7 @@ h1 {
 input {
   border: none;
   outline: none;
-  width: 850px;
+  width: 840px;
   border-bottom: 2px black solid;
   margin-bottom: 5px;
 }
@@ -78,4 +79,31 @@ input {
 
 form {
   width: 200px;
+}
+
+.input-reply {
+  width: 800px;
+}
+
+.abra {
+  display: inline-block;
+}
+
+.comment-img {
+  vertical-align: bottom;
+}
+
+.reply-img {
+  width: 30px;
+  height: 30px;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  padding: 0;
+  margin: 0;
 }

@@ -58,10 +58,12 @@ const displayComments = function (comms) {
       <div class="comment-div">
         <img src="${comms.images[i]}" alt="" />
         <div class="comment-content">
-          <h1>${comms.users[i]}</h1>
+          <h2>${comms.users[i]}</h2>
           <p>${comms.texts[i]}</p>
           <button class="reply-btn">Reply</button>
           <div class="add-reply-div collapse">
+          
+            <img class="reply-img" src="https://picsum.photos/20" alt="" />
             <input class="input-reply" placeholder="Write a reply..." type="text"> 
             <br/>
             <button class="cancel-reply-btn">Cancel</button>
@@ -84,9 +86,9 @@ const displayComments = function (comms) {
       .map(
         (_, j) =>
           `<div class="reply-div">
-                      <img src=${comments.replies[i].images[j]} alt="" />
+                      <img class = "reply-img"src=${comments.replies[i].images[j]} alt="" />
                       <div class="reply-content">
-                      <h1>${comments.replies[i].users[j]}</h1>
+                      <h4>${comments.replies[i].users[j]}</h4>
                       <p>${comments.replies[i].texts[j]}</p>
                       </div>
                 </div>`
@@ -192,7 +194,8 @@ const loginBtn = document.querySelector(".login__btn");
 const inputLoginUsername = document.querySelector(".login__input--user");
 const inputLoginPin = document.querySelector(".login__input--pin");
 const labelWelcome = document.querySelector(".welcome");
-const mainImg = document.querySelector(".main-img");
+const commentImg = document.querySelector(".comment-img");
+const replyImg = document.querySelector(".reply-img");
 
 const createUsername = function (accs) {
   console.log(accs);
@@ -206,7 +209,7 @@ const createUsername = function (accs) {
 createUsername(accounts);
 
 let currentAccount;
-// currentAccount = account1; //to be removed, fake login
+currentAccount = account1; //to be removed, fake login
 
 loginBtn.addEventListener("click", function (e) {
   e.preventDefault();
@@ -236,8 +239,9 @@ loginBtn.addEventListener("click", function (e) {
   }
 
   if (currentAccount) {
-    console.log(mainImg);
-    mainImg.src = currentAccount.image;
+    console.log(commentImg);
+    commentImg.src = currentAccount.image;
+    replyImg.src = currentAccount.image;
   }
 });
 
