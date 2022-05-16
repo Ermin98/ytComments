@@ -3,14 +3,14 @@
 const account1 = {
   image:
     "https://i.picsum.photos/id/5/200/300.jpg?hmac=1TWjKFT7_MRP0ApEyDUA3eCP0HXaKTWJfHgVjwGNoZU",
-  user: "Marko Zorzok",
+  user: "James Gerrard",
   pin: 1111,
 };
 
 const account2 = {
   image:
     "https://i.picsum.photos/id/836/200/200.jpg?hmac=70GDRJl0glOr9fJhUxmdhh7zQQz1uA8Zam_aGTa8Ucg",
-  user: "Paul Berger",
+  user: "Tony Montana",
   pin: 2222,
 };
 
@@ -22,7 +22,7 @@ const comments = {
     "https://picsum.photos/30",
     "https://picsum.photos/30",
   ],
-  users: ["Jones Carol", "Ivan Berzok", "Mike Torres"],
+  users: ["Jones Carol", "Paul Berger", "Mike Torres"],
   texts: ["Hi! Great video!", "Wow! Thank you.", "I subscribed!"],
   replies: [
     {
@@ -34,21 +34,24 @@ const comments = {
     {
       images: ["https://picsum.photos/30", "https://picsum.photos/30"],
       users: ["Pierre Jacques", "Caroline Schmidt"],
-      texts: ["He helped me too.", "Exactly, thank you!"],
+      texts: ["Very helpful.", "Exactly, thank you!"],
       opened: false,
     },
     {
       images: ["https://picsum.photos/30", "https://picsum.photos/30"],
-      users: ["Mark Zorr", "Quintin Dupont"],
+      users: ["Mark Stark", "Quentin Dupont"],
       texts: ["I agree with you.", "Nicely said."],
       opened: false,
     },
   ],
 };
+let currentAccount;
 
 const commentInput = document.querySelector(".comment-input");
 const commentBtn = document.querySelector(".comment-btn");
 const commentContainer = document.querySelector(".comments");
+const commentApp = document.querySelector(".comment-app");
+
 const displayComments = function (comms) {
   commentContainer.innerHTML = "";
 
@@ -63,7 +66,11 @@ const displayComments = function (comms) {
           <button class="reply-btn">Reply</button>
           <div class="add-reply-div collapse">
           
-            <img class="reply-img" src="https://picsum.photos/20" alt="" />
+            <img class="reply-img" src=${
+              currentAccount
+                ? currentAccount.image
+                : "https://logodix.com/logo/1727545.png"
+            } alt="" />
             <input class="input-reply" placeholder="Write a reply..." type="text"> 
             <br/>
             <button class="cancel-reply-btn">Cancel</button>
@@ -130,7 +137,6 @@ const displayComments = function (comms) {
 
   cancelCommentBtn.addEventListener("click", function (e) {
     e.preventDefault();
-    console.log(cancelCommentBtn);
     cancelCommentBtn.classList.add("collapse");
     commentBtn.classList.add("collapse");
   });
@@ -181,24 +187,28 @@ commentBtn.addEventListener("click", function (e) {
     updateUI();
   }
 });
+const commentImg = document.querySelector(".comment-img");
 
 const updateUI = function () {
   displayComments(comments);
-  // displayReplies();
+
+  currentAccount
+    ? (commentImg.src = currentAccount.image)
+    : (commentImg.src = "https://logodix.com/logo/1727545.png");
 };
 updateUI();
 
 //LOGIN
 
+const loginFields = document.querySelector(".login-fields");
 const loginBtn = document.querySelector(".login__btn");
 const inputLoginUsername = document.querySelector(".login__input--user");
 const inputLoginPin = document.querySelector(".login__input--pin");
 const labelWelcome = document.querySelector(".welcome");
-const commentImg = document.querySelector(".comment-img");
-const replyImg = document.querySelector(".reply-img");
+const replyImg = document.querySelectorAll(".reply-img");
+const logoutBtn = document.querySelector(".logout-btn");
 
 const createUsername = function (accs) {
-  console.log(accs);
   accs.forEach((acc) => {
     acc.username = acc.user
       .split(" ")
@@ -208,7 +218,6 @@ const createUsername = function (accs) {
 };
 createUsername(accounts);
 
-let currentAccount;
 currentAccount = account1; //to be removed, fake login
 
 loginBtn.addEventListener("click", function (e) {
@@ -220,14 +229,19 @@ loginBtn.addEventListener("click", function (e) {
       +inputLoginPin.value === acc.pin
   );
 
-  console.log(currentAccount);
-
   if (currentAccount) {
     labelWelcome.textContent = `Welcome back, ${
       currentAccount.user.split(" ")[0]
     }!`;
+    commentImg.src = currentAccount.image;
+    replyImg.forEach((img) => {
+      img.src = currentAccount.image;
+    });
+
     inputLoginUsername.value = inputLoginPin.value = "";
-    inputLoginPin.blur();
+    loginFields.classList.add("collapse");
+    commentApp.classList.remove("collapse");
+    logoutBtn.classList.remove("collapse");
   } else if (
     inputLoginUsername.value !== "" &&
     inputLoginPin.value !== "" &&
@@ -237,12 +251,19 @@ loginBtn.addEventListener("click", function (e) {
   } else {
     labelWelcome.textContent = `Username or password field empty!`;
   }
-
-  if (currentAccount) {
-    console.log(commentImg);
-    commentImg.src = currentAccount.image;
-    replyImg.src = currentAccount.image;
-  }
+  updateUI();
 });
-
+// if (currentAccount) {
+//   commentImg.src = currentAccount.image;
+//   replyImg.src = currentAccount.image;
+// }
 /////
+
+logoutBtn.addEventListener("click", function (e) {
+  e.preventDefault();
+  loginFields.classList.remove("collapse");
+  commentApp.classList.add("collapse");
+  logoutBtn.classList.add("collapse");
+  currentAccount = undefined;
+  // updateUI();
+});
