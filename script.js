@@ -25,9 +25,16 @@ const comments = {
   users: ["Jones Carol", "Paul Berger", "Mike Torres"],
   texts: ["Hi! Great video!", "Wow! Thank you.", "I subscribed!"],
   likes: [
-    ["name1 name2", "name1 name2", "name1 name2"],
-    ["name1 name2", "name1 name2", "name1 name2", "name1 name2"],
-    ["name1 name2", "name1 name2", "name1 name2"],
+    ["name1 name2", "name1 name2", "name1 name2", "name1 name2", "name1 name2"],
+    [
+      "name1 name2",
+      "name1 name2",
+      "name1 name2",
+      "name1 name2",
+      "name1 name2",
+      "name1 name2",
+    ],
+    ["name1 name2", "name1 name2", "name1 name2", "name1 name2", "name1 name2"],
   ],
   dislikes: [
     ["name1 name2", "name1 name2"],
@@ -74,11 +81,15 @@ const displayComments = function (comms) {
           <h2>${comms.users[i]}</h2>
           <p>${comms.texts[i]}</p>
           <div class="likes">
-            <span class="like-btns like">👍</span> 
+            <span class="like-btns like">${
+              !comments.likes[i].includes(currentAccount?.user) ? "👍" : "👍🏾"
+            }</span> 
             <span class="like-counter">${
               comments.likes[i].length - comments.dislikes[i].length
             }</span> 
-            <span class="like-btns dislike">👎</span> 
+            <span class="like-btns dislike">${
+              !comments.dislikes[i].includes(currentAccount?.user) ? "👎" : "👎🏾"
+            }</span> 
           </div>
           <button class="reply-btn">Reply</button>
           <div class="add-reply-div collapse">
