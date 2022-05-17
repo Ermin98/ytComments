@@ -24,6 +24,16 @@ const comments = {
   ],
   users: ["Jones Carol", "Paul Berger", "Mike Torres"],
   texts: ["Hi! Great video!", "Wow! Thank you.", "I subscribed!"],
+  likes: [
+    ["name1 name2", "name1 name2", "name1 name2"],
+    ["name1 name2", "name1 name2", "name1 name2", "name1 name2"],
+    ["name1 name2", "name1 name2", "name1 name2"],
+  ],
+  dislikes: [
+    ["name1 name2", "name1 name2"],
+    ["name1 name2", "name1 name2", "name1 name2"],
+    ["name1 name2", "name1 name2"],
+  ],
   replies: [
     {
       images: [],
@@ -63,6 +73,13 @@ const displayComments = function (comms) {
         <div class="comment-content">
           <h2>${comms.users[i]}</h2>
           <p>${comms.texts[i]}</p>
+          <div class="likes">
+            <span class="like-btns like">👍</span> 
+            <span class="like-counter">${
+              comments.likes[i].length - comments.dislikes[i].length
+            }</span> 
+            <span class="like-btns dislike">👎</span> 
+          </div>
           <button class="reply-btn">Reply</button>
           <div class="add-reply-div collapse">
           
@@ -171,6 +188,50 @@ const displayComments = function (comms) {
       updateUI();
     });
   });
+
+  const likeBtns = document.querySelectorAll(".like-btns");
+  const likeCounter = document.querySelectorAll(".like-counter");
+  const likeBtn = document.querySelectorAll(".like");
+  const dislikeBtn = document.querySelectorAll(".dislike");
+
+  likeBtn.forEach((btn, i) => {
+    btn.addEventListener("click", function () {
+      const currentLikeIndex = comments.likes[i].indexOf(currentAccount.user);
+      const currentDislikeIndex = comments.dislikes[i].indexOf(
+        currentAccount.user
+      );
+      if (!comments.likes[i].includes(currentAccount.user)) {
+        comments.likes[i].unshift(currentAccount.user);
+        if (comments.dislikes[i].includes(currentAccount.user)) {
+          comments.dislikes[i].splice(currentDislikeIndex, 1);
+        }
+      } else {
+        comments.likes[i].splice(currentLikeIndex, 1);
+      }
+
+      updateUI();
+    });
+  });
+
+  dislikeBtn.forEach((btn, i) => {
+    btn.addEventListener("click", function () {
+      const currentLikeIndex = comments.likes[i].indexOf(currentAccount.user);
+      const currentDislikeIndex = comments.dislikes[i].indexOf(
+        currentAccount.user
+      );
+
+      if (!comments.dislikes[i].includes(currentAccount.user)) {
+        comments.dislikes[i].unshift(currentAccount.user);
+        if (comments.likes[i].includes(currentAccount.user)) {
+          comments.likes[i].splice(currentLikeIndex, 1);
+        }
+      } else {
+        comments.dislikes[i].splice(currentDislikeIndex, 1);
+      }
+
+      updateUI();
+    });
+  });
 };
 
 commentBtn.addEventListener("click", function (e) {
@@ -182,6 +243,8 @@ commentBtn.addEventListener("click", function (e) {
     comments.users.unshift(currentAccount.user);
     comments.texts.unshift(commentInput.value);
     comments.images.unshift(currentAccount.image);
+    comments.likes.unshift([]);
+    comments.dislikes.unshift([]);
     commentInput.value = "";
     comments.replies.unshift({ images: [], users: [], texts: [] });
     updateUI();
@@ -253,11 +316,6 @@ loginBtn.addEventListener("click", function (e) {
   }
   updateUI();
 });
-// if (currentAccount) {
-//   commentImg.src = currentAccount.image;
-//   replyImg.src = currentAccount.image;
-// }
-/////
 
 logoutBtn.addEventListener("click", function (e) {
   e.preventDefault();
