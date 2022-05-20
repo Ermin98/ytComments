@@ -41,6 +41,16 @@ const comments = {
     ["name1 name2", "name1 name2", "name1 name2"],
     ["name1 name2", "name1 name2"],
   ],
+  replyLikes: [
+    [],
+    [["name1 name2"], ["name1 name2", "name1 name2", "name1 name2"]],
+    [
+      ["name1 name2", "name1 name2", "name1 name2", "name1 name2"],
+      ["name1 name2", "name1 name2", "name1 name2", "name1 name2"],
+    ],
+  ],
+  replyDislikes: [[], [[], ["name1 name2"]], [["name1 name2"], []]],
+
   replies: [
     {
       images: [],
@@ -84,7 +94,7 @@ const displayComments = function (comms) {
             <span class="like-btns like">${
               !comments.likes[i].includes(currentAccount?.user) ? "👍" : "👍🏾"
             }</span> 
-            <span class="like-counter">${
+            <span>${
               comments.likes[i].length - comments.dislikes[i].length
             }</span> 
             <span class="like-btns dislike">${
@@ -121,10 +131,30 @@ const displayComments = function (comms) {
       .map(
         (_, j) =>
           `<div class="reply-div">
-                      <img class = "reply-img"src=${comments.replies[i].images[j]} alt="" />
+                      <img class="reply-img" src=${
+                        comments.replies[i].images[j]
+                      } alt="" />
                       <div class="reply-content">
                       <h4>${comments.replies[i].users[j]}</h4>
                       <p>${comments.replies[i].texts[j]}</p>
+
+                      <div class="likes">
+            <span class="like-btns reply-like">${
+              !comments.replyLikes[i][j].includes(currentAccount?.user)
+                ? "👍"
+                : "👍🏾"
+            }</span> 
+            <span>${
+              comments.replyLikes[i][j].length -
+              comments.replyDislikes[i][j].length
+            }</span> 
+            <span class="like-btns reply-dislike">${
+              !comments.replyDislikes[i][j].includes(currentAccount?.user)
+                ? "👎"
+                : "👎🏾"
+            }</span> 
+          </div>
+
                       </div>
                 </div>`
       )
@@ -136,6 +166,7 @@ const displayComments = function (comms) {
     `;
     commentContainer.insertAdjacentHTML("afterbegin", html);
   }
+
   const replyBtn = document.querySelectorAll(".reply-btn");
   const inputReply = document.querySelectorAll(".input-reply");
   const sendReplyBtn = document.querySelectorAll(".send-reply-btn");
@@ -182,9 +213,13 @@ const displayComments = function (comms) {
       if (!currentAccount) {
         alert("You are not logged in!");
       } else if (inputReply[i].value.trim().length !== 0) {
+        //adding reply data to the replies array
         comments.replies[i].users.push(currentAccount.user);
         comments.replies[i].texts.push(inputReply[i].value);
         comments.replies[i].images.push(currentAccount.image);
+        comments.replyLikes[i].push([]);
+        comments.replyDislikes[i].push([]);
+        //open replies section after adding comment
         comments.replies[i].opened = true;
         updateUI();
       }
@@ -200,8 +235,8 @@ const displayComments = function (comms) {
     });
   });
 
+  //Comments like and dislike buttons
   const likeBtns = document.querySelectorAll(".like-btns");
-  const likeCounter = document.querySelectorAll(".like-counter");
   const likeBtn = document.querySelectorAll(".like");
   const dislikeBtn = document.querySelectorAll(".dislike");
 
@@ -243,6 +278,52 @@ const displayComments = function (comms) {
       updateUI();
     });
   });
+
+  //Replies like and dislike buttons
+  const replyLikeBtn = document.querySelectorAll(".reply-like");
+  const replyDislikeBtn = document.querySelectorAll(".reply-dislike");
+
+  replyLikeBtn.forEach((btn, i) => {
+    btn.addEventListener("click", function (e) {
+      const currentLikeIndex = comments.replyLikes
+        .flat()
+        [i].indexOf(currentAccount.user);
+      const currentDislikeIndex = comments.replyDislikes
+        .flat()
+        [i].indexOf(currentAccount.user);
+
+      if (!comments.replyLikes.flat()[i].includes(currentAccount.user)) {
+        comments.replyLikes.flat()[i].unshift(currentAccount.user);
+        if (comments.replyDislikes.flat()[i].includes(currentAccount.user)) {
+          comments.replyDislikes.flat()[i].splice(currentDislikeIndex, 1);
+        }
+      } else {
+        comments.replyLikes.flat()[i].splice(currentLikeIndex, 1);
+      }
+      updateUI();
+    });
+  });
+
+  replyDislikeBtn.forEach((btn, i) => {
+    btn.addEventListener("click", function () {
+      const currentLikeIndex = comments.replyLikes
+        .flat()
+        [i].indexOf(currentAccount.user);
+      const currentDislikeIndex = comments.replyDislikes
+        .flat()
+        [i].indexOf(currentAccount.user);
+
+      if (!comments.replyDislikes.flat()[i].includes(currentAccount.user)) {
+        comments.replyDislikes.flat()[i].unshift(currentAccount.user);
+        if (comments.replyLikes.flat()[i].includes(currentAccount.user)) {
+          comments.replyLikes.flat()[i].splice(currentLikeIndex, 1);
+        }
+      } else {
+        comments.replyDislikes.flat()[i].splice(currentDislikeIndex, 1);
+      }
+      updateUI();
+    });
+  });
 };
 
 commentBtn.addEventListener("click", function (e) {
@@ -257,7 +338,14 @@ commentBtn.addEventListener("click", function (e) {
     comments.likes.unshift([]);
     comments.dislikes.unshift([]);
     commentInput.value = "";
-    comments.replies.unshift({ images: [], users: [], texts: [] });
+    comments.replies.unshift({
+      images: [],
+      users: [],
+      texts: [],
+      opened: false,
+    });
+    comments.replyLikes.unshift([]);
+    comments.replyDislikes.unshift([]);
     updateUI();
   }
 });
