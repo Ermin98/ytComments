@@ -91,13 +91,13 @@ const displayComments = function (comms) {
           <h2>${comms.users[i]}</h2>
           <p>${comms.texts[i]}</p>
           <div class="likes">
-            <span class="like-btns">${
+            <span class="like-btns like">${
               !comments.likes[i].includes(currentAccount?.user) ? "👍" : "👍🏾"
             }</span> 
             <span>${
               comments.likes[i].length - comments.dislikes[i].length
             }</span> 
-            <span class="like-btns">${
+            <span class="like-btns dislike">${
               !comments.dislikes[i].includes(currentAccount?.user) ? "👎" : "👎🏾"
             }</span> 
           </div>
@@ -139,7 +139,7 @@ const displayComments = function (comms) {
                       <p>${comments.replies[i].texts[j]}</p>
 
                       <div class="likes">
-            <span class="reply-like-btns">${
+            <span class="reply-like-btns reply-like">${
               !comments.replyLikes[i][j].includes(currentAccount?.user)
                 ? "👍"
                 : "👍🏾"
@@ -148,7 +148,7 @@ const displayComments = function (comms) {
               comments.replyLikes[i][j].length -
               comments.replyDislikes[i][j].length
             }</span> 
-            <span class="reply-like-btns">${
+            <span class="reply-like-btns reply-dislike">${
               !comments.replyDislikes[i][j].includes(currentAccount?.user)
                 ? "👎"
                 : "👎🏾"
