@@ -91,13 +91,13 @@ const displayComments = function (comms) {
           <h2>${comms.users[i]}</h2>
           <p>${comms.texts[i]}</p>
           <div class="likes">
-            <span class="like-btns like">${
+            <span class="like-btns">${
               !comments.likes[i].includes(currentAccount?.user) ? "👍" : "👍🏾"
             }</span> 
             <span>${
               comments.likes[i].length - comments.dislikes[i].length
             }</span> 
-            <span class="like-btns dislike">${
+            <span class="like-btns">${
               !comments.dislikes[i].includes(currentAccount?.user) ? "👎" : "👎🏾"
             }</span> 
           </div>
@@ -139,7 +139,7 @@ const displayComments = function (comms) {
                       <p>${comments.replies[i].texts[j]}</p>
 
                       <div class="likes">
-            <span class="like-btns reply-like">${
+            <span class="reply-like-btns">${
               !comments.replyLikes[i][j].includes(currentAccount?.user)
                 ? "👍"
                 : "👍🏾"
@@ -148,7 +148,7 @@ const displayComments = function (comms) {
               comments.replyLikes[i][j].length -
               comments.replyDislikes[i][j].length
             }</span> 
-            <span class="like-btns reply-dislike">${
+            <span class="reply-like-btns">${
               !comments.replyDislikes[i][j].includes(currentAccount?.user)
                 ? "👎"
                 : "👎🏾"
@@ -237,42 +237,36 @@ const displayComments = function (comms) {
 
   //Comments like and dislike buttons
   const likeBtns = document.querySelectorAll(".like-btns");
-  const likeBtn = document.querySelectorAll(".like");
-  const dislikeBtn = document.querySelectorAll(".dislike");
 
-  likeBtn.forEach((btn, i) => {
+  likeBtns.forEach((btn, ii) => {
     btn.addEventListener("click", function () {
-      const currentLikeIndex = comments.likes[i].indexOf(currentAccount.user);
-      const currentDislikeIndex = comments.dislikes[i].indexOf(
-        currentAccount.user
-      );
-      if (!comments.likes[i].includes(currentAccount.user)) {
-        comments.likes[i].unshift(currentAccount.user);
-        if (comments.dislikes[i].includes(currentAccount.user)) {
-          comments.dislikes[i].splice(currentDislikeIndex, 1);
-        }
-      } else {
-        comments.likes[i].splice(currentLikeIndex, 1);
-      }
+      //Dividing the like index by two in order to match the comment index
+      let i = Math.floor(ii / 2);
 
-      updateUI();
-    });
-  });
-
-  dislikeBtn.forEach((btn, i) => {
-    btn.addEventListener("click", function () {
+      //Checking if the account exists inside the like/dislike arrays
       const currentLikeIndex = comments.likes[i].indexOf(currentAccount.user);
       const currentDislikeIndex = comments.dislikes[i].indexOf(
         currentAccount.user
       );
 
-      if (!comments.dislikes[i].includes(currentAccount.user)) {
-        comments.dislikes[i].unshift(currentAccount.user);
-        if (comments.likes[i].includes(currentAccount.user)) {
+      if (btn.classList.contains("like")) {
+        if (!comments.likes[i].includes(currentAccount.user)) {
+          comments.likes[i].unshift(currentAccount.user);
+          if (comments.dislikes[i].includes(currentAccount.user)) {
+            comments.dislikes[i].splice(currentDislikeIndex, 1);
+          }
+        } else {
           comments.likes[i].splice(currentLikeIndex, 1);
         }
-      } else {
-        comments.dislikes[i].splice(currentDislikeIndex, 1);
+      } else if (btn.classList.contains("dislike")) {
+        if (!comments.dislikes[i].includes(currentAccount.user)) {
+          comments.dislikes[i].unshift(currentAccount.user);
+          if (comments.likes[i].includes(currentAccount.user)) {
+            comments.likes[i].splice(currentLikeIndex, 1);
+          }
+        } else {
+          comments.dislikes[i].splice(currentDislikeIndex, 1);
+        }
       }
 
       updateUI();
@@ -280,11 +274,14 @@ const displayComments = function (comms) {
   });
 
   //Replies like and dislike buttons
-  const replyLikeBtn = document.querySelectorAll(".reply-like");
-  const replyDislikeBtn = document.querySelectorAll(".reply-dislike");
+  const replyLikeBtns = document.querySelectorAll(".reply-like-btns");
 
-  replyLikeBtn.forEach((btn, i) => {
+  replyLikeBtns.forEach((btn, ii) => {
     btn.addEventListener("click", function (e) {
+      //Dividing the like index by two in order to match the reply index
+      let i = Math.floor(ii / 2);
+
+      //Checking if the account exists inside the like/dislike arrays
       const currentLikeIndex = comments.replyLikes
         .flat()
         [i].indexOf(currentAccount.user);
@@ -292,35 +289,26 @@ const displayComments = function (comms) {
         .flat()
         [i].indexOf(currentAccount.user);
 
-      if (!comments.replyLikes.flat()[i].includes(currentAccount.user)) {
-        comments.replyLikes.flat()[i].unshift(currentAccount.user);
-        if (comments.replyDislikes.flat()[i].includes(currentAccount.user)) {
-          comments.replyDislikes.flat()[i].splice(currentDislikeIndex, 1);
-        }
-      } else {
-        comments.replyLikes.flat()[i].splice(currentLikeIndex, 1);
-      }
-      updateUI();
-    });
-  });
-
-  replyDislikeBtn.forEach((btn, i) => {
-    btn.addEventListener("click", function () {
-      const currentLikeIndex = comments.replyLikes
-        .flat()
-        [i].indexOf(currentAccount.user);
-      const currentDislikeIndex = comments.replyDislikes
-        .flat()
-        [i].indexOf(currentAccount.user);
-
-      if (!comments.replyDislikes.flat()[i].includes(currentAccount.user)) {
-        comments.replyDislikes.flat()[i].unshift(currentAccount.user);
-        if (comments.replyLikes.flat()[i].includes(currentAccount.user)) {
+      if (btn.classList.contains("reply-like")) {
+        if (!comments.replyLikes.flat()[i].includes(currentAccount.user)) {
+          comments.replyLikes.flat()[i].unshift(currentAccount.user);
+          if (comments.replyDislikes.flat()[i].includes(currentAccount.user)) {
+            comments.replyDislikes.flat()[i].splice(currentDislikeIndex, 1);
+          }
+        } else {
           comments.replyLikes.flat()[i].splice(currentLikeIndex, 1);
         }
-      } else {
-        comments.replyDislikes.flat()[i].splice(currentDislikeIndex, 1);
+      } else if (btn.classList.contains("reply-dislike")) {
+        if (!comments.replyDislikes.flat()[i].includes(currentAccount.user)) {
+          comments.replyDislikes.flat()[i].unshift(currentAccount.user);
+          if (comments.replyLikes.flat()[i].includes(currentAccount.user)) {
+            comments.replyLikes.flat()[i].splice(currentLikeIndex, 1);
+          }
+        } else {
+          comments.replyDislikes.flat()[i].splice(currentDislikeIndex, 1);
+        }
       }
+
       updateUI();
     });
   });
