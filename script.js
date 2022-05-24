@@ -98,7 +98,7 @@ const displayComments = function (comms) {
     const minute = `${date.getMinutes()}`.padStart(2, 0);
     const hour = `${date.getHours()}`.padStart(2, 0);
     const day = `${date.getDate()}`.padStart(2, 0);
-    const month = `${date.getMonth()}`.padStart(2, 0);
+    const month = `${date.getMonth() + 1}`.padStart(2, 0);
     const year = `${date.getFullYear()}`;
     const displayDate = `${day}.${month}.${year} at ${hour}:${minute}`;
 
@@ -156,7 +156,7 @@ const displayComments = function (comms) {
         const replyMinute = `${replyDate.getMinutes()}`.padStart(2, 0);
         const replyHour = `${replyDate.getHours()}`.padStart(2, 0);
         const replyDay = `${replyDate.getDate()}`.padStart(2, 0);
-        const replyMonth = `${replyDate.getMonth()}`.padStart(2, 0);
+        const replyMonth = `${replyDate.getMonth() + 1}`.padStart(2, 0);
         const replyYear = `${replyDate.getFullYear()}`;
         const displayDate = `${replyDay}.${replyMonth}.${replyYear} at ${replyHour}:${replyMinute}`;
 
