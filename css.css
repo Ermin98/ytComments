@@ -155,3 +155,15 @@ label[for="txt"] {
   color: #4b7bea;
   text-decoration: none;
 }
+
+.inline {
+  display: inline;
+}
+.inline-block {
+  display: inline-block;
+}
+
+.comment-date {
+  text-decoration: none;
+  color: #777;
+}

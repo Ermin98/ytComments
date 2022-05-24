@@ -36,6 +36,11 @@ const comments = {
     ],
     ["name1 name2", "name1 name2", "name1 name2", "name1 name2", "name1 name2"],
   ],
+  commentDatesArray: [
+    "2019-11-18T21:31:17.178Z",
+    "2019-12-23T07:42:02.383Z",
+    "2020-01-28T09:15:04.904Z",
+  ],
   dislikes: [
     ["name1 name2", "name1 name2"],
     ["name1 name2", "name1 name2", "name1 name2"],
@@ -85,11 +90,21 @@ const displayComments = function (comms) {
 
   // for (let i = 0; i < comms.texts.length; i++) {
   for (let i = comms.texts.length - 1; i >= 0; i--) {
+    //defining time
+    const date = new Date(comments.commentDatesArray[i]);
+    const minute = `${date.getMinutes()}`.padStart(2, 0);
+    const hour = `${date.getHours()}`.padStart(2, 0);
+    const day = `${date.getDate()}`.padStart(2, 0);
+    const month = `${date.getMonth()}`.padStart(2, 0);
+    const year = `${date.getFullYear()}`;
+    const displayDate = `${day}/${month}/${year} at ${hour}:${minute}`;
+
     const html = `
       <div id="comment-${i}" class="comment-div">
         <img src="${comms.images[i]}" alt="" />
         <div class="comment-content">
-          <h2>${comms.users[i]}</h2>
+          <h2 class="inline-block">${comms.users[i]}</h2>
+            <a class="comment-date" href="#">${displayDate}</a>
           <p>${comms.texts[i]}</p>
           <div class="likes">
             <span class="like-btns like">${
@@ -391,6 +406,9 @@ commentBtn.addEventListener("click", function (e) {
   if (currentAccount === undefined) {
     alert("You are not logged in!");
   } else if (commentInput.textContent.trim().length !== 0) {
+    //add comment date
+    comments.commentDatesArray.unshift(new Date().toISOString());
+
     comments.users.unshift(currentAccount.user);
     comments.texts.unshift(commentInput.textContent);
     comments.images.unshift(currentAccount.image);
