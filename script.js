@@ -305,36 +305,40 @@ const displayComments = function (comms) {
         sendReplyBtn[i].parentElement.parentElement.children[0].textContent;
       console.log(replyingTo.length);
 
-      //if reply doesn't contain only spaces and/or username, the input won't count as empty
-      if (
-        inputReply[i].textContent.trim().length -
-          (inputReply[i].children[0]?.children[0]?.textContent.length
-            ? replyingTo.length + 1
-            : 0) >
-        0
-      ) {
-        //adding the current reply date to the reply array
-        comments.replies[commentID].replyDatesArray.push([
-          new Date().toISOString(),
-        ]);
-        //adding reply data to the replies array
-        comments.replies[commentID].users.push(currentAccount.user);
-        //if tag not removed, make a href link of it, otherwise just show the text
-        comments.replies[commentID].texts.push(
-          inputReply[i].children[0]?.children[0]?.textContent
-            ? `<a href="#" class="reply-tag-href">@${replyingTo}</a> ${inputReply[
-                i
-              ].textContent
-                .split(replyingTo)[1]
-                .trim()}`
-            : inputReply[i].textContent
-        );
-        comments.replies[commentID].images.push(currentAccount.image);
-        comments.replyLikes[commentID].push([]);
-        comments.replyDislikes[commentID].push([]);
-        //open replies section after adding comment
-        comments.replies[commentID].opened = true;
-        updateUI();
+      if (currentAccount === undefined) {
+        alert("You are not logged in!");
+      } else {
+        //if reply doesn't contain only spaces and/or username, the input won't count as empty
+        if (
+          inputReply[i].textContent.trim().length -
+            (inputReply[i].children[0]?.children[0]?.textContent.length
+              ? replyingTo.length + 1
+              : 0) >
+          0
+        ) {
+          //adding the current reply date to the reply array
+          comments.replies[commentID].replyDatesArray.push([
+            new Date().toISOString(),
+          ]);
+          //adding reply data to the replies array
+          comments.replies[commentID].users.push(currentAccount.user);
+          //if tag not removed, make a href link of it, otherwise just show the text
+          comments.replies[commentID].texts.push(
+            inputReply[i].children[0]?.children[0]?.textContent
+              ? `<a href="#" class="reply-tag-href">@${replyingTo}</a> ${inputReply[
+                  i
+                ].textContent
+                  .split(replyingTo)[1]
+                  .trim()}`
+              : inputReply[i].textContent
+          );
+          comments.replies[commentID].images.push(currentAccount.image);
+          comments.replyLikes[commentID].push([]);
+          comments.replyDislikes[commentID].push([]);
+          //open replies section after adding comment
+          comments.replies[commentID].opened = true;
+          updateUI();
+        }
       }
     });
   }
@@ -343,6 +347,7 @@ const displayComments = function (comms) {
     btn.addEventListener("click", function (e) {
       e.preventDefault();
       comments.replies[i].opened = !comments.replies[i].opened;
+
       replies[i].classList.toggle("collapse");
 
       updateUI();
@@ -466,6 +471,7 @@ const inputLoginPin = document.querySelector(".login__input--pin");
 const labelWelcome = document.querySelector(".welcome");
 const replyImg = document.querySelectorAll(".reply-img");
 const logoutBtn = document.querySelector(".logout-btn");
+const guestModeBtn = document.querySelector(".guest-mode-btn");
 
 const createUsername = function (accs) {
   accs.forEach((acc) => {
@@ -487,7 +493,7 @@ const updateUI = function () {
 };
 updateUI();
 
-currentAccount = account1; //to be removed, fake login
+// currentAccount = account1; //to be removed, fake login
 
 loginBtn.addEventListener("click", function (e) {
   e.preventDefault();
@@ -530,4 +536,26 @@ logoutBtn.addEventListener("click", function (e) {
   logoutBtn.classList.add("collapse");
   currentAccount = undefined;
   // updateUI();
+});
+const inputReply = document.querySelectorAll(".input-reply");
+const addComment = document.querySelector(".add-comment");
+const replyBtn = document.querySelectorAll(".reply-btn");
+const userModeBtn = document.querySelector(".user-mode-btn");
+guestModeBtn.addEventListener("click", function (e) {
+  e.preventDefault;
+  console.log(2);
+  loginFields.classList.add("collapse");
+  commentApp.classList.remove("collapse");
+  userModeBtn.classList.remove("collapse");
+
+  labelWelcome.textContent =
+    "Welcome, Guest! You have to log in in order to be able to comment.";
+});
+
+userModeBtn.addEventListener("click", function () {
+  loginFields.classList.remove("collapse");
+  commentApp.classList.add("collapse");
+  userModeBtn.classList.add("collapse");
+
+  labelWelcome.textContent = "";
 });
