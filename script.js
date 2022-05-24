@@ -63,18 +63,21 @@ const comments = {
       users: [],
       texts: [],
       opened: false,
+      replyDatesArray: [],
     },
     {
       images: ["https://picsum.photos/30", "https://picsum.photos/30"],
       users: ["Pierre Jacques", "Caroline Schmidt"],
       texts: ["Very helpful.", "Exactly, thank you!"],
       opened: false,
+      replyDatesArray: ["2020-02-05T16:33:06.386Z", "2020-04-10T14:43:26.374Z"],
     },
     {
       images: ["https://picsum.photos/30", "https://picsum.photos/30"],
       users: ["Mark Stark", "Quentin Dupont"],
       texts: ["I agree with you.", "Nicely said."],
       opened: false,
+      replyDatesArray: ["2020-06-25T18:49:59.371Z", "2020-07-26T12:01:20.894Z"],
     },
   ],
 };
@@ -97,7 +100,7 @@ const displayComments = function (comms) {
     const day = `${date.getDate()}`.padStart(2, 0);
     const month = `${date.getMonth()}`.padStart(2, 0);
     const year = `${date.getFullYear()}`;
-    const displayDate = `${day}/${month}/${year} at ${hour}:${minute}`;
+    const displayDate = `${day}.${month}.${year} at ${hour}:${minute}`;
 
     const html = `
       <div id="comment-${i}" class="comment-div">
@@ -144,14 +147,30 @@ const displayComments = function (comms) {
       comments.replies[i].opened === false ? `collapse` : ``
     }">
     ${comments.replies[i].texts
-      .map(
-        (_, j) =>
-          `<div id="comment-${i}-reply-${j}" class="reply-div">
+      .map((_, j) => {
+        // console.log(date);
+        // console.log(date2[j]);
+        // const saat = `${date[j].getHours()}`;
+        // console.log(date2);
+        const replyDate = new Date(comments.replies[i].replyDatesArray[j]);
+        const replyMinute = `${replyDate.getMinutes()}`.padStart(2, 0);
+        const replyHour = `${replyDate.getHours()}`.padStart(2, 0);
+        const replyDay = `${replyDate.getDate()}`.padStart(2, 0);
+        const replyMonth = `${replyDate.getMonth()}`.padStart(2, 0);
+        const replyYear = `${replyDate.getFullYear()}`;
+        const displayDate = `${replyDay}.${replyMonth}.${replyYear} at ${replyHour}:${replyMinute}`;
+
+        // console.log(saat);
+
+        return `<div id="comment-${i}-reply-${j}" class="reply-div">
                       <img class="reply-img" src=${
                         comments.replies[i].images[j]
                       } alt="" />
                       <div class="reply-content">
-                      <h4>${comments.replies[i].users[j]}</h4>
+                      <h4 class="inline-block">${
+                        comments.replies[i].users[j]
+                      }</h4>
+                      <a class="comment-date" href="#">${displayDate}</a>
                       <p>${comments.replies[i].texts[j]}</p>
 
                       <div class="likes">
@@ -189,8 +208,8 @@ const displayComments = function (comms) {
 
 
                       </div>
-                </div>`
-      )
+                </div>`;
+      })
       .join("")}
     </div>
     
@@ -282,6 +301,7 @@ const displayComments = function (comms) {
         sendReplyBtn[i].parentElement.parentElement.children[0].textContent;
       console.log(replyingTo.length);
 
+      //if reply doesn't contain only spaces and/or username, the input won't count as empty
       if (
         inputReply[i].textContent.trim().length -
           (inputReply[i].children[0]?.children[0]?.textContent.length
@@ -289,6 +309,10 @@ const displayComments = function (comms) {
             : 0) >
         0
       ) {
+        //adding the current reply date to the reply array
+        comments.replies[commentID].replyDatesArray.push([
+          new Date().toISOString(),
+        ]);
         //adding reply data to the replies array
         comments.replies[commentID].users.push(currentAccount.user);
         //if tag not removed, make a href link of it, otherwise just show the text
@@ -420,6 +444,7 @@ commentBtn.addEventListener("click", function (e) {
       users: [],
       texts: [],
       opened: false,
+      replyDatesArray: [],
     });
     comments.replyLikes.unshift([]);
     comments.replyDislikes.unshift([]);
