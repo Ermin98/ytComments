@@ -1,15 +1,13 @@
 "use strict";
 
 const account1 = {
-  image:
-    "https://i.picsum.photos/id/5/200/300.jpg?hmac=1TWjKFT7_MRP0ApEyDUA3eCP0HXaKTWJfHgVjwGNoZU",
+  image: "https://picsum.photos/id/1005/200",
   user: "James Gerrard",
   pin: 1111,
 };
 
 const account2 = {
-  image:
-    "https://i.picsum.photos/id/836/200/200.jpg?hmac=70GDRJl0glOr9fJhUxmdhh7zQQz1uA8Zam_aGTa8Ucg",
+  image: "https://picsum.photos/id/338/200",
   user: "Tony Montana",
   pin: 2222,
 };
@@ -18,9 +16,9 @@ const accounts = [account1, account2];
 
 const comments = {
   images: [
-    "https://picsum.photos/30",
-    "https://picsum.photos/30",
-    "https://picsum.photos/30",
+    "https://picsum.photos/id/883/200",
+    "https://picsum.photos/id/447/200",
+    "https://picsum.photos/id/669/200",
   ],
   users: ["Jones Carol", "Paul Berger", "Mike Torres"],
   texts: ["Hi! Great video!", "Wow! Thank you.", "I subscribed!"],
@@ -66,14 +64,20 @@ const comments = {
       replyDatesArray: [],
     },
     {
-      images: ["https://picsum.photos/30", "https://picsum.photos/30"],
+      images: [
+        "https://picsum.photos/id/473/200",
+        "https://picsum.photos/id/1027/200",
+      ],
       users: ["Pierre Jacques", "Caroline Schmidt"],
       texts: ["Very helpful.", "Exactly, thank you!"],
       opened: false,
       replyDatesArray: ["2020-02-05T16:33:06.386Z", "2020-04-10T14:43:26.374Z"],
     },
     {
-      images: ["https://picsum.photos/30", "https://picsum.photos/30"],
+      images: [
+        "https://picsum.photos/id/685/200",
+        "https://picsum.photos/id/856/200",
+      ],
       users: ["Mark Stark", "Quentin Dupont"],
       texts: ["I agree with you.", "Nicely said."],
       opened: false,
