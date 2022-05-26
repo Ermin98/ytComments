@@ -592,6 +592,8 @@ loginBtn.addEventListener("click", function (e) {
     loginFields.classList.add("collapse");
     commentApp.classList.remove("collapse");
     logoutBtn.classList.remove("collapse");
+    //turn off the sorting when you log in to another account
+    displayComments(comments, (sorted = false));
   } else if (
     inputLoginUsername.value !== "" &&
     inputLoginPin.value !== "" &&
