@@ -106,9 +106,12 @@ const totalNumberOfComments = document.querySelector(
 );
 const sortComments = document.querySelector(".sort-comments");
 
-let frozenCurrentCommentIndexes;
-const displayComments = function (comms, sort = undefined) {
+const displayComments = function (comms, sort = false) {
   commentContainer.innerHTML = "";
+
+  //making a clone of the parameter in order to not change the original object
+  // const comms = commsParameter;
+  // const comms = Object.create(commsParameter);
 
   //getting the new sorted index based on the likes
   let newCommentMap = new Map();
@@ -120,27 +123,24 @@ const displayComments = function (comms, sort = undefined) {
     });
     commentsObject = [...newCommentMap.entries()];
   });
-  const nonSortedIndexes = [...newCommentMap.entries()].map((a, i) => i);
+  const nonSortedIndexes = [2, 1, 0];
+  // [...newCommentMap.entries()].map((a, i) => i);
 
-  let sortedIndexes;
-  //creating the array of sorted indexes and stop updating them when you click the sort button
-  if (sort === false) {
-    sortedIndexes = commentsObject
-      .sort(
-        (a, b) =>
-          b[1].comLikes.length -
-          b[1].comDislikes.length -
-          (a[1].comLikes.length - a[1].comDislikes.length)
-      )
-      .flat()
-      .filter((el) => typeof el === "string")
-      .map((newIndex) => +newIndex.split("-")[1]);
-    frozenCurrentCommentIndexes = sortedIndexes.slice();
-  } else {
-    sortedIndexes = frozenCurrentCommentIndexes;
-  }
+  //creating the array of sorted
 
-  // sorting the comments if the parameter is true, otherwise show comments non-ordered.
+  const sortedIndexes = [0, 1, 2];
+  // commentsObject
+  //   .sort(
+  //     (a, b) =>
+  //       b[1].comLikes.length -
+  //       b[1].comDislikes.length -
+  //       (a[1].comLikes.length - a[1].comDislikes.length)
+  //   )
+  //   .flat()
+  //   .filter((el) => typeof el === "string")
+  //   .map((newIndex) => +newIndex.split("-")[1]);
+  //sorting the comments if the parameter is true, otherwise show comments non-ordered.
+
   const images1 = sort
     ? sortedIndexes.slice().map((a) => comms.images[a])
     : nonSortedIndexes.slice().map((a) => comms.images[a]);
@@ -177,12 +177,13 @@ const displayComments = function (comms, sort = undefined) {
     ? sortedIndexes.slice().map((a) => comms.replies[a])
     : nonSortedIndexes.slice().map((a) => comms.replies[a]);
 
-  //defining the number of length
+  ////////////////////////////////////////////////////////////////////////
+
   let numberOfComments = replies1.length;
   let numberOfReplies = 0;
 
-  // Calculate and display the number of comments
   for (let i = comms.texts.length - 1; i >= 0; i--) {
+    // Display the number of comments
     numberOfReplies += replies1[i].texts.length;
     totalNumberOfComments.textContent = `${
       numberOfComments + numberOfReplies
@@ -239,6 +240,10 @@ const displayComments = function (comms, sort = undefined) {
     <div class="replies ${replies1[i].opened === false ? `collapse` : ``}">
     ${replies1[i].texts
       .map((_, j) => {
+        // console.log(date);
+        // console.log(date2[j]);
+        // const saat = `${date[j].getHours()}`;
+        // console.log(date2);
         const replyDate = new Date(replies1[i].replyDatesArray[j]);
         const replyMinute = `${replyDate.getMinutes()}`.padStart(2, 0);
         const replyHour = `${replyDate.getHours()}`.padStart(2, 0);
@@ -246,6 +251,8 @@ const displayComments = function (comms, sort = undefined) {
         const replyMonth = `${replyDate.getMonth() + 1}`.padStart(2, 0);
         const replyYear = `${replyDate.getFullYear()}`;
         const displayDate = `${replyDay}.${replyMonth}.${replyYear} at ${replyHour}:${replyMinute}`;
+
+        // console.log(saat);
 
         return `<div id="comment-${i}-reply-${j}" class="reply-div">
                       <img class="reply-img" src=${
@@ -310,10 +317,10 @@ const displayComments = function (comms, sort = undefined) {
   const replyBtn = document.querySelectorAll(".reply-btn");
   const inputReply = document.querySelectorAll(".input-reply");
   const sendReplyBtn = document.querySelectorAll(".send-reply-btn");
-  // const replyToReplyBtn = document.querySelectorAll(".reply-to-reply-btn");
+  const replyToReplyBtn = document.querySelectorAll(".reply-to-reply-btn");
   const showRepliesBtn = document.querySelectorAll(".show-replies-btn");
-  // const commentDiv = document.querySelectorAll(".comment-div");
-  // const replyDiv = document.querySelectorAll(".reply-div");
+  const commentDiv = document.querySelectorAll(".comment-div");
+  const replyDiv = document.querySelectorAll(".reply-div");
   const replies = document.querySelectorAll(".replies");
   const addReplyDiv = document.querySelectorAll(".add-reply-div ");
   const cancelReplyBtn = document.querySelectorAll(".cancel-reply-btn");
@@ -433,6 +440,7 @@ const displayComments = function (comms, sort = undefined) {
     btn.addEventListener("click", function () {
       //Dividing the like/dislike indexes by two in order to match the comment index
       let i = Math.floor(ii / 2);
+
       //Checking if the account exists inside the like/dislike arrays
       const currentLikeIndex = likes1[i].indexOf(currentAccount.user);
       const currentDislikeIndex = dislikes1[i].indexOf(currentAccount.user);
@@ -500,13 +508,11 @@ replyLikeBtns.forEach((btn, ii) => {
     updateUI();
   });
 });
-//switch and update the sorted variable each time you click the sort button
 let sorted = false;
-sortComments.addEventListener("click", function (e) {
+sortComments.addEventListener("click", function () {
   displayComments(comments, !sorted);
   sorted = !sorted;
 });
-
 commentBtn.addEventListener("click", function (e) {
   e.preventDefault();
 
@@ -514,15 +520,15 @@ commentBtn.addEventListener("click", function (e) {
     alert("You are not logged in!");
   } else if (commentInput.textContent.trim().length !== 0) {
     //add comment date
-    comments.commentDatesArray.unshift(new Date().toISOString());
+    commentDatesArray1.unshift(new Date().toISOString());
 
-    comments.users.unshift(currentAccount.user);
-    comments.texts.unshift(commentInput.textContent);
-    comments.images.unshift(currentAccount.image);
-    comments.likes.unshift([]);
-    comments.dislikes.unshift([]);
+    users1.unshift(currentAccount.user);
+    texts1.unshift(commentInput.textContent);
+    images1.unshift(currentAccount.image);
+    likes1.unshift([]);
+    dislikes1.unshift([]);
     commentInput.textContent = "";
-    comments.replies.unshift({
+    replies1.unshift({
       images: [],
       users: [],
       texts: [],
@@ -530,7 +536,7 @@ commentBtn.addEventListener("click", function (e) {
       replyDatesArray: [],
     });
     comments.replyLikes.unshift([]);
-    comments.replyDislikes.unshift([]);
+    replyDislikes1.unshift([]);
     updateUI();
   }
 });
@@ -559,7 +565,7 @@ createUsername(accounts);
 
 //Updating the UI
 const updateUI = function () {
-  displayComments(comments, sorted);
+  displayComments(comments);
 
   currentAccount
     ? (commentImg.src = currentAccount.image)
