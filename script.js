@@ -460,46 +460,47 @@ const displayComments = function (comms, sort = undefined) {
       updateUI();
     });
   });
-};
-//Replies like and dislike buttons
-const replyLikeBtns = document.querySelectorAll(".reply-like-btns");
+  //Replies like and dislike buttons
+  const replyLikeBtns = document.querySelectorAll(".reply-like-btns");
 
-replyLikeBtns.forEach((btn, ii) => {
-  btn.addEventListener("click", function (e) {
-    //Dividing the like index by two in order to match the reply index
-    let i = Math.floor(ii / 2);
+  replyLikeBtns.forEach((btn, ii) => {
+    btn.addEventListener("click", function (e) {
+      //Dividing the like index by two in order to match the reply index
+      let i = Math.floor(ii / 2);
 
-    //Checking if the account exists inside the like/dislike arrays
-    const currentLikeIndex = comments.replyLikes
-      .flat()
-      [i].indexOf(currentAccount.user);
-    const currentDislikeIndex = replyDislikes1
-      .flat()
-      [i].indexOf(currentAccount.user);
+      //Checking if the account exists inside the like/dislike arrays
+      const currentLikeIndex = replyLikes1
+        .flat()
+        [i].indexOf(currentAccount.user);
+      const currentDislikeIndex = replyDislikes1
+        .flat()
+        [i].indexOf(currentAccount.user);
 
-    if (btn.classList.contains("reply-like")) {
-      if (!comments.replyLikes.flat()[i].includes(currentAccount.user)) {
-        comments.replyLikes.flat()[i].unshift(currentAccount.user);
-        if (replyDislikes1.flat()[i].includes(currentAccount.user)) {
+      if (btn.classList.contains("reply-like")) {
+        if (!replyLikes1.flat()[i].includes(currentAccount.user)) {
+          replyLikes1.flat()[i].unshift(currentAccount.user);
+          if (replyDislikes1.flat()[i].includes(currentAccount.user)) {
+            replyDislikes1.flat()[i].splice(currentDislikeIndex, 1);
+          }
+        } else {
+          replyLikes1.flat()[i].splice(currentLikeIndex, 1);
+        }
+      } else if (btn.classList.contains("reply-dislike")) {
+        if (!replyDislikes1.flat()[i].includes(currentAccount.user)) {
+          replyDislikes1.flat()[i].unshift(currentAccount.user);
+          if (replyLikes1.flat()[i].includes(currentAccount.user)) {
+            replyLikes1.flat()[i].splice(currentLikeIndex, 1);
+          }
+        } else {
           replyDislikes1.flat()[i].splice(currentDislikeIndex, 1);
         }
-      } else {
-        comments.replyLikes.flat()[i].splice(currentLikeIndex, 1);
       }
-    } else if (btn.classList.contains("reply-dislike")) {
-      if (!replyDislikes1.flat()[i].includes(currentAccount.user)) {
-        replyDislikes1.flat()[i].unshift(currentAccount.user);
-        if (comments.replyLikes.flat()[i].includes(currentAccount.user)) {
-          comments.replyLikes.flat()[i].splice(currentLikeIndex, 1);
-        }
-      } else {
-        replyDislikes1.flat()[i].splice(currentDislikeIndex, 1);
-      }
-    }
 
-    updateUI();
+      updateUI();
+    });
   });
-});
+};
+
 //switch and update the sorted variable each time you click the sort button
 let sorted = false;
 sortComments.addEventListener("click", function (e) {
