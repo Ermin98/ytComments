@@ -139,7 +139,6 @@ const displayComments = function (comms, sort = undefined) {
   } else {
     sortedIndexes = frozenCurrentCommentIndexes;
   }
-
   // sorting the comments if the parameter is true, otherwise show comments non-ordered.
   const images1 = sort
     ? sortedIndexes.slice().map((a) => comms.images[a])
@@ -306,7 +305,7 @@ const displayComments = function (comms, sort = undefined) {
       document.execCommand("insertText", false, text);
     });
   });
-
+  //Defining selectors
   const replyBtn = document.querySelectorAll(".reply-btn");
   const inputReply = document.querySelectorAll(".input-reply");
   const sendReplyBtn = document.querySelectorAll(".send-reply-btn");
@@ -510,35 +509,46 @@ sortComments.addEventListener("click", function (e) {
 
 commentBtn.addEventListener("click", function (e) {
   e.preventDefault();
+  //function for adding the main comments
+  const commentBtnFunc = function () {
+    if (currentAccount === undefined) {
+      alert("You are not logged in!");
+    } else if (commentInput.textContent.trim().length !== 0) {
+      //add comment date
+      comments.commentDatesArray.unshift(new Date().toISOString());
 
-  if (currentAccount === undefined) {
-    alert("You are not logged in!");
-  } else if (commentInput.textContent.trim().length !== 0) {
-    //add comment date
-    comments.commentDatesArray.unshift(new Date().toISOString());
-
-    comments.users.unshift(currentAccount.user);
-    comments.texts.unshift(commentInput.textContent);
-    comments.images.unshift(currentAccount.image);
-    comments.likes.unshift([]);
-    comments.dislikes.unshift([]);
-    commentInput.textContent = "";
-    comments.replies.unshift({
-      images: [],
-      users: [],
-      texts: [],
-      opened: false,
-      replyDatesArray: [],
-    });
-    comments.replyLikes.unshift([]);
-    comments.replyDislikes.unshift([]);
+      comments.users.unshift(currentAccount.user);
+      comments.texts.unshift(commentInput.textContent);
+      comments.images.unshift(currentAccount.image);
+      comments.likes.unshift([]);
+      comments.dislikes.unshift([]);
+      commentInput.textContent = "";
+      comments.replies.unshift({
+        images: [],
+        users: [],
+        texts: [],
+        opened: false,
+        replyDatesArray: [],
+      });
+      comments.replyLikes.unshift([]);
+      comments.replyDislikes.unshift([]);
+      updateUI();
+    }
+  };
+  //if comments are sorted, unsort them to add a comment than sort it back
+  if (sorted === true) {
+    sorted = false;
+    commentBtnFunc();
+    sorted = true;
     updateUI();
+  } else {
+    commentBtnFunc();
   }
 });
 const commentImg = document.querySelector(".comment-img");
 
 //LOGIN
-
+//Defining selectors
 const loginFields = document.querySelector(".login-fields");
 const loginBtn = document.querySelector(".login__btn");
 const inputLoginUsername = document.querySelector(".login__input--user");
