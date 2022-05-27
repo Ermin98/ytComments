@@ -108,6 +108,7 @@ const sortComments = document.querySelector(".sort-comments");
 
 let frozenCurrentCommentIndexes;
 const displayComments = function (comms, sort = undefined) {
+  totalNumberOfComments.textContent = "0 comments";
   commentContainer.innerHTML = "";
 
   //getting the new sorted index based on the likes
@@ -123,10 +124,11 @@ const displayComments = function (comms, sort = undefined) {
   const nonSortedIndexes = [...newCommentMap.entries()].map((a, i) => i);
 
   let sortedIndexes;
+
   //creating the array of sorted indexes and stop updating them when you click the sort button
   if (sort === false) {
     sortedIndexes = commentsObject
-      .sort(
+      ?.sort(
         (a, b) =>
           b[1].comLikes.length -
           b[1].comDislikes.length -
@@ -135,7 +137,7 @@ const displayComments = function (comms, sort = undefined) {
       .flat()
       .filter((el) => typeof el === "string")
       .map((newIndex) => +newIndex.split("-")[1]);
-    frozenCurrentCommentIndexes = sortedIndexes.slice();
+    frozenCurrentCommentIndexes = sortedIndexes?.slice();
   } else {
     sortedIndexes = frozenCurrentCommentIndexes;
   }
@@ -181,7 +183,7 @@ const displayComments = function (comms, sort = undefined) {
   let numberOfReplies = 0;
 
   // Calculate and display the number of comments
-  for (let i = comms.texts.length - 1; i >= 0; i--) {
+  for (let i = texts1.length - 1; i >= 0; i--) {
     numberOfReplies += replies1[i].texts.length;
     totalNumberOfComments.textContent = `${
       numberOfComments + numberOfReplies
@@ -198,11 +200,12 @@ const displayComments = function (comms, sort = undefined) {
 
     const html = `
       <div id="comment-${i}" class="comment-div">
-        <img src="${images1[i]}" alt="" />
+            <span class="delete-comment"><button><i class="las la-trash"></i></button></span>
+            <img src="${images1[i]}" alt="" />
         <div class="comment-content">
-          <h2 class="inline-block">${users1[i]}</h2>
+            <h2 class="inline-block">${users1[i]}</h2>
             <a class="comment-date" href="#">${displayDate}</a>
-          <p>${texts1[i]}</p>
+          <p class="all-comment-paragraphs">${texts1[i]}</p>
           <div class="likes">
             <span class="like-btns like">${
               !likes1[i].includes(currentAccount?.user) ? "👍" : "👍🏾"
@@ -247,13 +250,17 @@ const displayComments = function (comms, sort = undefined) {
         const displayDate = `${replyDay}.${replyMonth}.${replyYear} at ${replyHour}:${replyMinute}`;
 
         return `<div id="comment-${i}-reply-${j}" class="reply-div">
+        <span class="delete-comment"><button><i class="las la-trash"></i></button></span>
+
                       <img class="reply-img" src=${
                         replies1[i].images[j]
                       } alt="" />
                       <div class="reply-content">
                       <h4 class="inline-block">${replies1[i].users[j]}</h4>
                       <a class="comment-date" href="#">${displayDate}</a>
-                      <p>${replies1[i].texts[j]}</p>
+                      <p class="all-comment-paragraphs">${
+                        replies1[i].texts[j]
+                      }</p>
 
                       <div class="likes">
             <span class="reply-like-btns reply-like">${
@@ -317,6 +324,7 @@ const displayComments = function (comms, sort = undefined) {
   const addReplyDiv = document.querySelectorAll(".add-reply-div ");
   const cancelReplyBtn = document.querySelectorAll(".cancel-reply-btn");
   const cancelCommentBtn = document.querySelector(".cancel-comment-btn");
+  const deleteComment = document.querySelectorAll(".delete-comment");
 
   replyBtn.forEach((btn, i) => {
     btn.addEventListener("click", function (e) {
@@ -366,16 +374,14 @@ const displayComments = function (comms, sort = undefined) {
     commentBtn.classList.remove("collapse");
   });
 
-  for (let i = sendReplyBtn.length - 1; i >= 0; i--) {
-    sendReplyBtn[i].addEventListener("click", function (e) {
+  sendReplyBtn.forEach((btn, i) => {
+    btn.addEventListener("click", function (e) {
       e.preventDefault();
-      console.log(inputReply[i].children[0]?.children[0]?.textContent.length);
 
       //getting ID of the parent
-      let commentID = sendReplyBtn[i].closest(".comment-div").id.split("-")[1];
+      let commentID = btn.closest(".comment-div").id.split("-")[1];
 
-      let replyingTo =
-        sendReplyBtn[i].parentElement.parentElement.children[0].textContent;
+      let replyingTo = btn.parentElement.parentElement.children[0].textContent;
       console.log(replyingTo.length);
 
       if (currentAccount === undefined) {
@@ -412,7 +418,7 @@ const displayComments = function (comms, sort = undefined) {
         }
       }
     });
-  }
+  });
 
   showRepliesBtn.forEach((btn, i) => {
     btn.addEventListener("click", function (e) {
@@ -498,6 +504,51 @@ const displayComments = function (comms, sort = undefined) {
       updateUI();
     });
   });
+  //deleting comments
+  deleteComment.forEach((comment, i) => {
+    comment.addEventListener("click", function (e) {
+      //defining IDs
+      const commentID = comment.parentElement.id.split("-")[1];
+      const replyOfCommentID = comment.parentElement.id.split("-")[3];
+
+      //if it isn't a reply, delete the comment, otherwise delete the reply
+      if (replyOfCommentID === undefined) {
+        comments.users.splice(i, 1);
+        comments.commentDatesArray.splice(i, 1);
+        comments.texts.splice(i, 1);
+        comments.images.splice(i, 1);
+        comments.likes.splice(i, 1);
+        comments.dislikes.splice(i, 1);
+        comments.replies.splice(i, 1);
+        comments.replyLikes.splice(i, 1);
+        comments.replyDislikes.splice(i, 1);
+      } else {
+        comments.replies[commentID].replyDatesArray.splice(replyOfCommentID, 1);
+
+        comments.replies[commentID].users.splice(replyOfCommentID, 1);
+
+        comments.replies[commentID].texts.splice(replyOfCommentID, 1);
+
+        comments.replies[commentID].images.splice(replyOfCommentID, 1);
+
+        comments.replyLikes[commentID].splice(replyOfCommentID, 1);
+
+        comments.replyDislikes[commentID].splice(replyOfCommentID, 1);
+      }
+
+      //if comments are sorted, unsort them to add a comment than sort it back
+      if (sorted === true) {
+        sorted = false;
+        // commentBtnFunc();
+        // sorted = true;
+        // updateUI();
+      } else {
+        // commentBtnFunc();
+      }
+
+      updateUI();
+    });
+  });
 };
 
 //switch and update the sorted variable each time you click the sort button
@@ -526,10 +577,10 @@ commentBtn.addEventListener("click", function (e) {
 
       comments.users.unshift(currentAccount.user);
       comments.texts.unshift(commentInput.textContent);
+      commentInput.textContent = "";
       comments.images.unshift(currentAccount.image);
       comments.likes.unshift([]);
       comments.dislikes.unshift([]);
-      commentInput.textContent = "";
       comments.replies.unshift({
         images: [],
         users: [],
@@ -585,7 +636,7 @@ const updateUI = function () {
 };
 updateUI();
 
-// currentAccount = account1; //to be removed, fake login
+currentAccount = account1; //to be removed, fake login
 
 loginBtn.addEventListener("click", function (e) {
   e.preventDefault();
