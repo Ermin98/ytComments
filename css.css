@@ -121,8 +121,12 @@ h6 {
   margin: 0;
 }
 
-.logout-btn {
-  float: right;
+.welcome {
+  margin-top: 0;
+}
+.logout-btn,
+.user-mode-btn {
+  /* float: right; */
   background-color: rgb(93, 93, 175);
   padding: 3px 10px;
   color: white;
@@ -167,4 +171,8 @@ label[for="txt"] {
 .comment-date {
   text-decoration: none;
   color: #777;
+}
+
+.sort-comments {
+  padding-left: 30px;
 }

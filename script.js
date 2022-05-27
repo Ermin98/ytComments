@@ -505,6 +505,13 @@ let sorted = false;
 sortComments.addEventListener("click", function (e) {
   displayComments(comments, !sorted);
   sorted = !sorted;
+  if (
+    sortComments.innerHTML.includes(`<i class="las la-sort-amount-down"></i>`)
+  ) {
+    sortComments.innerHTML = `<i class="las la-sort-amount-down-alt"></i> UNSORT`;
+  } else {
+    sortComments.innerHTML = `<i class="las la-sort-amount-down"></i> SORT`;
+  }
 });
 
 commentBtn.addEventListener("click", function (e) {
@@ -556,7 +563,7 @@ const inputLoginPin = document.querySelector(".login__input--pin");
 const labelWelcome = document.querySelector(".welcome");
 const replyImg = document.querySelectorAll(".reply-img");
 const logoutBtn = document.querySelector(".logout-btn");
-const guestModeBtn = document.querySelector(".guest-mode-btn");
+const ghostModeBtn = document.querySelector(".ghost-mode-btn");
 
 const createUsername = function (accs) {
   accs.forEach((acc) => {
@@ -578,7 +585,7 @@ const updateUI = function () {
 };
 updateUI();
 
-currentAccount = account1; //to be removed, fake login
+// currentAccount = account1; //to be removed, fake login
 
 loginBtn.addEventListener("click", function (e) {
   e.preventDefault();
@@ -628,14 +635,14 @@ const inputReply = document.querySelectorAll(".input-reply");
 const addComment = document.querySelector(".add-comment");
 const replyBtn = document.querySelectorAll(".reply-btn");
 const userModeBtn = document.querySelector(".user-mode-btn");
-guestModeBtn.addEventListener("click", function (e) {
+ghostModeBtn.addEventListener("click", function (e) {
   e.preventDefault;
   loginFields.classList.add("collapse");
   commentApp.classList.remove("collapse");
   userModeBtn.classList.remove("collapse");
 
   labelWelcome.textContent =
-    "Welcome, Guest! You have to log in in order to be able to comment.";
+    "Welcome! You have to log in in order to be able to comment.";
 });
 
 userModeBtn.addEventListener("click", function () {
