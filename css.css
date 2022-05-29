@@ -187,7 +187,8 @@ label[for="txt"] {
   word-wrap: break-word;
 }
 
-.delete-comment {
+.delete-comment,
+.delete-reply {
   float: right;
   margin: 20px 20px 0px 0px;
 }

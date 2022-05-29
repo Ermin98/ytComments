@@ -23,31 +23,15 @@ const comments = {
   users: ["Jones Carol", "Paul Berger", "Mike Torres"],
   texts: ["Hi! Great video!", "Wow! Thank you.", "I subscribed!"],
   likes: [
+    ["name1 name2", "name0 name2", "name1 name2"],
     ["name1 name2", "name1 name2", "name1 name2", "name1 name2", "name1 name2"],
-    [
-      "name1 name2",
-      "name1 name2",
-      "name1 name2",
-      "name1 name2",
-      "name1 name2",
-      "name1 name2",
-      "name1 name2",
-    ],
-    [
-      "name1 name2",
-      "name1 name2",
-      "name1 name2",
-      "name1 name2",
-      "name1 name2",
-      "name1 name2",
-      "name1 name2",
-    ],
+    ["name1 name2", "name1 name2", "name1 name2", "name1 name2", "name1 name3"],
   ],
 
   dislikes: [
     ["name1 name2", "name1 name2"],
     ["name1 name2", "name1 name2", "name1 name2"],
-    ["name1 name2", "name1 name2"],
+    ["name1 name2", "name1 name9"],
   ],
   commentDatesArray: [
     "2019-11-18T21:31:17.178Z",
@@ -56,12 +40,13 @@ const comments = {
   ],
   replyLikes: [
     [],
-    [["name1 name2"], ["name1 name2", "name1 name2", "name1 name2"]],
+    [["name1 name2"], ["name1 name2", "name1 name5", "name1 name2"]],
     [
       ["name1 name2", "name1 name2", "name1 name2", "name1 name2"],
-      ["name1 name2", "name1 name2", "name1 name2", "name1 name2"],
+      ["name1 name2", "name1 name2", "name1 name2", "name1 name1"],
     ],
   ],
+  commentID: [],
   // replyID: [0, 1, 2]
   replyDislikes: [[], [[], ["name1 name2"]], [["name1 name2"], []]],
 
@@ -110,7 +95,12 @@ let frozenCurrentCommentIndexes;
 const displayComments = function (comms, sort = undefined) {
   totalNumberOfComments.textContent = "0 comments";
   commentContainer.innerHTML = "";
-
+  // if (sorted === true) {
+  //   sort = true;
+  // }
+  // {
+  //   sort = false;
+  // }
   //getting the new sorted index based on the likes
   let newCommentMap = new Map();
   let commentsObject;
@@ -121,29 +111,26 @@ const displayComments = function (comms, sort = undefined) {
     });
     commentsObject = [...newCommentMap.entries()];
   });
+
   const nonSortedIndexes = [...newCommentMap.entries()].map((a, i) => i);
 
   let sortedIndexes;
 
   //creating the array of sorted indexes and stop updating them when you click the sort button
-  if (sort === false) {
-    sortedIndexes = commentsObject
-      ?.sort(
-        (a, b) =>
-          b[1].comLikes.length -
-          b[1].comDislikes.length -
-          (a[1].comLikes.length - a[1].comDislikes.length)
-      )
-      .flat()
-      .filter((el) => typeof el === "string")
-      .map((newIndex) => +newIndex.split("-")[1]);
-    frozenCurrentCommentIndexes = sortedIndexes?.slice();
-  } else {
-    sortedIndexes = frozenCurrentCommentIndexes
-      ? frozenCurrentCommentIndexes
-      : [];
-  }
-  console.log(commentsObject);
+  sortedIndexes = commentsObject
+    ?.sort(
+      (a, b) =>
+        b[1].comLikes.length -
+        b[1].comDislikes.length -
+        (a[1].comLikes.length - a[1].comDislikes.length)
+    )
+    .flat()
+    .filter((el) => typeof el === "string")
+    .map((newIndex) => +newIndex.split("-")[1]);
+  frozenCurrentCommentIndexes = sortedIndexes?.slice();
+  sortedIndexes = frozenCurrentCommentIndexes
+    ? frozenCurrentCommentIndexes
+    : [];
   // sorting the comments if the parameter is true, otherwise show comments non-ordered.
   const images1 = sort
     ? sortedIndexes.slice().map((a) => comms.images[a])
@@ -253,6 +240,7 @@ const displayComments = function (comms, sort = undefined) {
 
         return `<div id="comment-${i}-reply-${j}" class="reply-div">
         
+        <span class="delete-reply"><button><i class="las la-trash"></i></button></span>
 
                       <img class="reply-img" src=${
                         replies1[i].images[j]
@@ -266,25 +254,26 @@ const displayComments = function (comms, sort = undefined) {
 
                       <div class="likes">
             <span class="reply-like-btns reply-like">${
-              !replyLikes1[i][j].includes(currentAccount?.user) ? "👍" : "👍🏾"
+              !replyLikes1[i][j]?.includes(currentAccount?.user) ? "👍" : "👍🏾"
             }</span> 
             <span>${
-              replyLikes1[i][j].length - replyDislikes1[i][j].length
+              replyLikes1[i][j]?.length - replyDislikes1[i][j].length
             }</span> 
             <span class="reply-like-btns reply-dislike">${
-              !replyDislikes1[i][j].includes(currentAccount?.user) ? "👎" : "👎🏾"
+              !replyDislikes1[i][j]?.includes(currentAccount?.user)
+                ? "👎"
+                : "👎🏾"
             }</span> 
           </div>
 
 
           <button class="reply-btn reply-to-reply-btn">Reply</button>
           <div class="add-reply-div collapse">
-          
-            <img class="reply-img" src=${
-              currentAccount
-                ? currentAccount.image
-                : "https://logodix.com/logo/1727545.png"
-            } alt="" />
+          <img class="reply-img" src=${
+            currentAccount
+              ? currentAccount.image
+              : "https://logodix.com/logo/1727545.png"
+          } alt="" />
             <div class="input-reply" contentEditable="true" data-text="Write a reply..."></div>
             <br/>
             <button class="cancel-reply-btn">Cancel</button>
@@ -327,6 +316,7 @@ const displayComments = function (comms, sort = undefined) {
   const cancelReplyBtn = document.querySelectorAll(".cancel-reply-btn");
   const cancelCommentBtn = document.querySelector(".cancel-comment-btn");
   const deleteComment = document.querySelectorAll(".delete-comment");
+  const deleteReply = document.querySelectorAll(".delete-reply");
 
   replyBtn.forEach((btn, i) => {
     btn.addEventListener("click", function (e) {
@@ -506,38 +496,156 @@ const displayComments = function (comms, sort = undefined) {
       updateUI();
     });
   });
-  //deleting comments
-  let arr = sort ? Array.from(deleteComment).reverse() : deleteComment;
+  // Deleting comments
 
-  arr.forEach((item, i) => {
+  deleteComment.forEach((item, i) => {
     item.addEventListener("click", function (e) {
-      sorted = false;
+      /////////images///////
+      comments.images.forEach((image, i) => {
+        if (
+          image ===
+          e.currentTarget.parentElement.children[2].parentElement.children[1]
+            .src
+        ) {
+          comments.images.splice(comments.images.indexOf(image), 1);
+        }
+      });
 
-      const deleteCommentFunc = function () {
-        comms.users.splice(i, 1);
-        comms.commentDatesArray.splice(i, 1);
-        comms.texts.splice(i, 1);
-        comms.images.splice(i, 1);
-        comms.likes.splice(i, 1);
-        comms.dislikes.splice(i, 1);
-        comms.replies.splice(i, 1);
-        comms.replyLikes.splice(i, 1);
-        comms.replyDislikes.splice(i, 1);
-        updateUI();
-      };
-      deleteCommentFunc();
+      comms.likes.forEach((like, i) => {
+        if (
+          +(like.length - comms.dislikes[i].length) ===
+            +e.currentTarget.parentElement.children[2].children[3].children[1]
+              .textContent &&
+          comms.users[i] ===
+            e.currentTarget.parentElement.children[2].children[0].textContent
+        ) {
+          comments.likes.splice(comms.likes.indexOf(like), 1);
+          comments.dislikes.splice(
+            comms.dislikes.indexOf(comms.dislikes[i]),
+            1
+          );
+        }
+      });
 
-      if (sort) {
-        sorted = true;
-        updateUI();
-      }
+      comments.texts.forEach((text, i) => {
+        console.log(text);
+        if (
+          text ===
+          e.currentTarget.parentElement.children[2].children[2].textContent
+        ) {
+          comments.texts.splice(comments.texts.indexOf(text), 1);
+        }
+      });
+
+      comms.commentDatesArray.forEach((commentDate, i) => {
+        if (
+          comms.users[i] ===
+          e.currentTarget.parentElement.children[2].children[0].textContent
+        ) {
+          comms.commentDatesArray.splice(
+            comms.commentDatesArray.indexOf(commentDate),
+            1
+          );
+        }
+      });
+
+      comments.replies.forEach((reply, i) => {
+        if (
+          comms.users[i] ===
+          e.currentTarget.parentElement.children[2].children[0].textContent
+        ) {
+          comments.replies.splice(comments.replies.indexOf(reply), 1);
+        }
+      });
+
+      comms.replyLikes.forEach((replyLike, i) => {
+        if (
+          comms.users[i] ===
+          e.currentTarget.parentElement.children[2].children[0].textContent
+        ) {
+          comments.replyLikes.splice(comments.replyLikes.indexOf(replyLike), 1);
+        }
+      });
+      comms.replyDislikes.forEach((replyDislike, i) => {
+        if (
+          comms.users[i] ===
+          e.currentTarget.parentElement.children[2].children[0].textContent
+        ) {
+          comments.replyDislikes.splice(
+            comments.replyDislikes.indexOf(replyDislike),
+            1
+          );
+        }
+      });
+
+      comments.users.forEach((user, i) => {
+        if (
+          user ===
+          e.currentTarget.parentElement.children[2].children[0].textContent
+        ) {
+          comments.users.splice(comms.users.indexOf(user), 1);
+        }
+      });
+
+      updateUI();
+    });
+  });
+
+  deleteReply.forEach((reply, i) => {
+    reply.addEventListener("click", function (e) {
+      const firstIndex = comms.users.indexOf(
+        reply.parentElement.parentElement.parentElement.children[0].textContent
+      );
+      const firstIndex22 = comms.images.indexOf(
+        reply.parentElement.parentElement.parentElement.children[0].textContent
+      );
+
+      console.log(
+        reply.parentElement.parentElement.parentElement.children[0].textContent
+      );
+      // console.log(firstIndex);
+
+      const secondIndex = comms.replies[firstIndex].users.indexOf(
+        reply.parentElement.children[2].children[0].textContent
+      );
+      const secondIndex2 = comms.replies[firstIndex].images.indexOf(
+        reply.parentElement.children[1].src
+      );
+      const secondIndex3 = comms.replies[firstIndex].texts.indexOf(
+        reply.parentElement.children[2].children[2].textContent
+      );
+      const secondIndex4 = comms.replies[firstIndex].replyDatesArray.indexOf(
+        reply.parentElement.children[2].children[1].textContent
+      );
+      comms.replyLikes.forEach((element, j) => {
+        if (
+          e.currentTarget.parentElement.parentElement.parentElement.children[0]
+            .textContent === comms.users[j]
+        ) {
+          element.forEach((element2, k) => {
+            if (
+              +(element2.length - comms.replyDislikes[j][k].length) ===
+              +reply.parentElement.children[2].children[3].children[1]
+                .textContent
+            ) {
+            }
+          });
+        }
+      });
+
+      comms.replies[firstIndex].users.splice(secondIndex, 1);
+      comms.replies[firstIndex].images.splice(secondIndex2, 1);
+      comms.replies[firstIndex].texts.splice(secondIndex3, 1);
+      comms.replies[firstIndex].replyDatesArray.splice(secondIndex4, 1);
+
+      updateUI();
     });
   });
 };
 
 //switch and update the sorted variable each time you click the sort button
 let sorted = false;
-
+let openeda = false;
 sortComments.addEventListener("click", function (e) {
   displayComments(comments, !sorted);
   sorted = !sorted;
@@ -548,6 +656,7 @@ sortComments.addEventListener("click", function (e) {
   } else {
     sortComments.innerHTML = `<i class="las la-sort-amount-down"></i> SORT`;
   }
+  openeda = true;
 });
 
 commentBtn.addEventListener("click", function (e) {
@@ -611,9 +720,17 @@ const createUsername = function (accs) {
 };
 createUsername(accounts);
 
+const createID = function (comms, i) {
+  comms.commentID = [];
+  comms.replies.forEach((ID, i) => {
+    comms.commentID.unshift(i);
+  });
+};
+
 //Updating the UI
 const updateUI = function () {
   displayComments(comments, sorted);
+  createID(comments);
 
   currentAccount
     ? (commentImg.src = currentAccount.image)
